@@ -1,1 +1,6 @@
 /node_modules/
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/users.iml
+.idea/modules.xml
+.idea/codeStyles/codeStyleConfig.xml
