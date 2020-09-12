@@ -10,23 +10,23 @@ const {
 
 const CompanyType = new GraphQLObjectType({
     name: 'Company',
-    fields: {
+    fields: () => ({
         id: {type: GraphQLString},
         name: {type: GraphQLString},
         description: {type: GraphQLString},
         users: {
             type: GraphQLList(UserType),
-            resolve(parentValue, args){
+            resolve(parentValue, args) {
                 return axios.get(`http://localhost:3000/companies/${parentValue.id}/users`)
-                    .then(res=> res.data)
+                    .then(res => res.data)
             }
         }
-    }
+    })
 })
 
 const UserType = new GraphQLObjectType({
     name: 'User', // note: by convention, capitalize named type
-    fields: { // tells GraphQL all the properties a user has and their types
+    fields: () => ({ // tells GraphQL all the properties a user has and their types
         id: {type: GraphQLString},
         firstName: {type: GraphQLString},
         age: {type: GraphQLInt},
@@ -37,7 +37,7 @@ const UserType = new GraphQLObjectType({
                     .then(res => res.data);
             }
         }
-    }
+    })
 })
 
 // the RootQuery will allow GraphQL to 'jump and land'
@@ -60,8 +60,8 @@ const RootQuery = new GraphQLObjectType({
 
         company: {
             type: CompanyType,
-            args: {id: {type:GraphQLString}},
-            resolve(parentValue, args){
+            args: {id: {type: GraphQLString}},
+            resolve(parentValue, args) {
                 return axios.get(`http://localhost:3000/companies/${args.id}`)
                     .then(res => res.data);
             }
