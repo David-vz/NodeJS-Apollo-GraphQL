@@ -1,16 +1,11 @@
 const graphql = require('graphql');
-const _ = require('lodash');
+const axios = require('axios');
 const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLInt,
     GraphQLSchema
 } = graphql;
-
-const users = [
-    {id: '23', firstName:'Bill', age: 20},
-    {id: '47', firstName:'Samantha', age: 21},
-]
 
 const UserType = new GraphQLObjectType({
     name: 'User', // note: by convention, capitalize named type
@@ -21,8 +16,8 @@ const UserType = new GraphQLObjectType({
     }
 })
 
-// the RootQuery will allow GraphQL to 'jump and land' on a very specific
-// node in the graph of all of our data
+// the RootQuery will allow GraphQL to 'jump and land'
+//  on a very specific node in the graph of all of our data
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -30,9 +25,12 @@ const RootQuery = new GraphQLObjectType({
             type: UserType,
             args: {id: {type: GraphQLString}},
             // the resolve function is where we go in to the db
-            // and find/return data we are looking for
+            //  and find/return data we are looking for
             resolve(parentValue, args){
-                return _.find(users, {id:args.id});
+                // graphql handles waiting for an async promise to resolve
+                return axios.get(`http://localhost:3000/users/${args.id}`)
+                    // gotcha with axios {data: <actual response>}
+                    .then(resp => resp.data);
             }
         }
     }
