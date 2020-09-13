@@ -87,7 +87,33 @@ const mutation = new GraphQLObjectType({
                         firstName,
                         age
                     }
-                ).then( res => res.data)
+                ).then(res => res.data)
+            }
+        },
+        deleteUser: {
+            type: UserType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLString)},
+            },
+            resolve(parentValue, {id}) {
+                return axios.delete(`http://localhost:3000/users/${id}`)
+                    .then(res => res.data)
+            }
+        },
+        editUser: {
+            type: UserType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLString)},
+                firstName: {type: GraphQLString},
+                age: {type: GraphQLInt},
+                companyId: {type: GraphQLString},
+            },
+            resolve(parentValue, {id, firstName, age, companyId}) {
+                return axios.patch(`http://localhost:3000/users/${id}`, {
+                    firstName,
+                    age,
+                    companyId
+                }).then(res => res.data);
             }
         }
     }
